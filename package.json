@@ -1,0 +1,24 @@
+{
+  "name": "cred-management-plus",
+  "version": "1.0.0",
+  "description": "Sistema de Gestão de Carteira de Clientes e Propostas de Crédito",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "cd backend && npm run dev",
+    "client:dev": "cd frontend && npm run dev",
+    "server:build": "cd backend && npm run build",
+    "client:build": "cd frontend && npm run build",
+    "db:setup": "cd backend && npm run db:setup"
+  },
+  "keywords": [
+    "gestao",
+    "credito",
+    "clientes"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
