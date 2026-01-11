@@ -287,9 +287,11 @@ npm install
 
 Após inicializar o sistema:
 
-1. ✅ Faça login com `>[USUARIO_REMOVIDO]<<` / `>[SENHA_REMOVIDA]<<`
+1. ✅ Faça login com `admin` / `admin123`
 2. ✅ Explore o Dashboard
 3. ✅ Crie um usuário de teste
+
+⚠️ **IMPORTANTE:** Altere a senha padrão no primeiro acesso!
 4. ⏳ Implemente os formulários (veja COMPLEMENTAR.md)
 5. ⏳ Teste o cadastro de clientes
 6. ⏳ Teste o cadastro de propostas

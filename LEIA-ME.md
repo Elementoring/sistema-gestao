@@ -362,7 +362,8 @@ cd ../frontend && npm install
 
 # Passo 5
 # Acesse http://localhost:5173
-# Login: >[USUARIO_REMOVIDO]<< / >[SENHA_REMOVIDA]<<
+# Login: admin / admin123
+# ⚠️ IMPORTANTE: Altere a senha no primeiro acesso!
 ```
 
 ---

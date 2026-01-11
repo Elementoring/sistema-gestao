@@ -28,8 +28,10 @@ Aguarde até ver:
 
 1. Abra http://localhost:5173
 2. Login: `admin`
-3. Senha: `>[SENHA_REMOVIDA]<<`
+3. Senha: `admin123`
 4. Clique em "Entrar"
+
+⚠️ **IMPORTANTE:** Altere a senha padrão após o primeiro acesso!
 
 **✅ TESTE PASSOU**: Você deve ver o Dashboard
 

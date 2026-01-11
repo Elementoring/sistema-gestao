@@ -19,7 +19,8 @@
 -- ============================================
 
 -- Criar Usuário Admin
--- Senha: >[SENHA_REMOVIDA]<< (sempre use senhas fortes em produção!)
+-- Senha padrão: admin123 (ALTERE EM PRODUÇÃO!)
+-- Use a variável de ambiente ADMIN_PASSWORD para definir senha personalizada
 INSERT INTO users (username, password, full_name, role) 
 VALUES (
   'admin', 

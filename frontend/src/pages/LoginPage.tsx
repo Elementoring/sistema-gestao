@@ -167,7 +167,7 @@ export default function LoginPage() {
                         <Input
                           id="username"
                           type="text"
-                          placeholder=">[USUARIO_REMOVIDO]<<"
+                          placeholder="admin"
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           required

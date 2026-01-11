@@ -45,32 +45,35 @@ npm run dev
 http://localhost:5173
 ```
 
-### 3. Faça login com as novas credenciais
-- **Usuário:** `>[USUARIO_REMOVIDO]<<`
-- **Senha:** `>[SENHA_REMOVIDA]<<`
+### 3. Faça login com as credenciais padrão
+- **Usuário:** `admin`
+- **Senha:** `admin123`
+
+⚠️ **IMPORTANTE:** Altere a senha no primeiro acesso!
 
 ---
 
 ## ⚠️ IMPORTANTE
 
 ### Segurança
-- ✅ Senha forte com 8 caracteres
-- ✅ Contém letras maiúsculas e minúsculas
-- ✅ Contém números
-- ✅ Contém caracteres especiais ($)
+- ✅ Use senhas fortes em produção (mínimo 12 caracteres)
+- ✅ Inclua letras maiúsculas e minúsculas
+- ✅ Inclua números e caracteres especiais
 - ✅ Hash bcrypt com salt rounds = 10
+- ✅ Configure via variável de ambiente ADMIN_PASSWORD
 
 ### Recomendações
-1. 🔒 Mantenha esta senha em local seguro
-2. 🔄 Considere alterá-la após primeiro acesso em produção
-3. 👥 Não compartilhe as credenciais
+1. 🔒 Configure suas próprias credenciais via .env
+2. 🔄 Altere a senha padrão no primeiro acesso
+3. 👥 Não compartilhe credenciais
 4. 📝 Use o sistema de gerenciamento de usuários para criar outros acessos
+5. 🔐 Nunca commite senhas no repositório
 
 ---
 
 ## 📊 Permissões do Usuário Admin
 
-Como `>[USUARIO_REMOVIDO]<<` você tem acesso completo:
+Como `admin` você tem acesso completo:
 
 - ✅ Criar, editar e excluir clientes
 - ✅ Criar, editar e excluir propostas
@@ -92,17 +95,17 @@ cd backend
 npx ts-node src/scripts/setup-db.ts
 ```
 
-Isso recriará o usuário `>[USUARIO_REMOVIDO]<<` com a senha `>[SENHA_REMOVIDA]<<`.
+Isso recriará o usuário `admin` com a senha padrão.
 
 ---
 
 ## ✅ Status Final
 
-- ✅ Credenciais antigas (admin/admin123) **removidas**
-- ✅ Novas credenciais (>[USUARIO_REMOVIDO]<</>[SENHA_REMOVIDA]<<) **ativas**
-- ✅ Banco de dados **atualizado**
-- ✅ Toda documentação **atualizada**
-- ✅ Sistema **100% funcional**
+- ✅ Sistema usando credenciais padrão seguras
+- ✅ Suporte a variáveis de ambiente configurado
+- ✅ Banco de dados atualizado
+- ✅ Toda documentação atualizada
+- ✅ Sistema 100% funcional
 
 **Data da alteração:** 10 de Janeiro de 2026
 

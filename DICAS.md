@@ -15,7 +15,7 @@ npm run dev
 ```
 
 ### 2. Fazer Login e Explorar
-- Login: `>[USUARIO_REMOVIDO]<<` / `>[SENHA_REMOVIDA]<<`
+- Login: `admin` / `admin123` ⚠️ (altere no primeiro acesso)
 - Explore o Dashboard
 - Veja a listagem de clientes
 - Teste a navegação

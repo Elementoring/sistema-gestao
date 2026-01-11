@@ -199,8 +199,10 @@ npm run dev
 
 ### 3. Acessar
 - URL: http://localhost:5173
-- Login: `>[USUARIO_REMOVIDO]<<`
-- Senha: `>[SENHA_REMOVIDA]<<`
+- Login: `admin`
+- Senha: `admin123`
+
+⚠️ **IMPORTANTE:** Altere a senha no primeiro acesso!
 
 ---
 

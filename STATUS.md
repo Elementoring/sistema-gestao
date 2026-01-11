@@ -22,7 +22,7 @@
 - ✅ Campos para todos os dados solicitados
 - ✅ Suporte a múltiplos benefícios por cliente
 - ✅ Script de setup automatizado
-- ✅ Usuário admin padrão (>[USUARIO_REMOVIDO]<</>[SENHA_REMOVIDA]<<)
+- ✅ Usuário admin padrão (admin/admin123)
 
 **Frontend (React + TypeScript + Vite)**
 - ✅ Design premium com Tailwind CSS
@@ -106,7 +106,9 @@ npm run dev
 
 Abra: **http://localhost:5173**
 
-Login: `>[USUARIO_REMOVIDO]<<` / `>[SENHA_REMOVIDA]<<`
+Login: `admin` / `admin123`
+
+⚠️ **IMPORTANTE:** Altere a senha no primeiro acesso!
 
 ## 📋 O que você precisa fazer
 

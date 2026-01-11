@@ -58,9 +58,10 @@ Write-Host "
 
 👤 Usuário padrão criado:
    Login: admin
-   Senha: >[SENHA_REMOVIDA]<<
+   Senha: admin123
 
-⚠️  Lembre-se de alterar a senha padrão após o primeiro login!
+⚠️  IMPORTANTE: Altere a senha padrão no primeiro acesso!
+⚠️  Use a variável de ambiente ADMIN_PASSWORD para definir senha personalizada.
 
 📝 Próximos passos:
    1. Execute: .\start-system.ps1
