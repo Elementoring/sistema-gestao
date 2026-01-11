@@ -67,6 +67,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Cred Management + API está rodando!' });
 });
 
+// Rota raiz (útil para verificar no browser)
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Cred Management + API está rodando!',
+    health: '/api/health',
+  });
+});
+
 // Handler de erro 404
 app.use((req, res) => {
   res.status(404).json({ error: 'Rota não encontrada' });
