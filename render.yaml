@@ -1,12 +1,10 @@
 services:
-  # PostgreSQL Database
   - type: pserv
     name: cred-management-db
     plan: free
     databaseName: cred_management
     databaseUser: cred_admin
 
-  # Backend API (Node.js + Express)
   - type: web
     name: cred-management-backend
     env: node
@@ -32,17 +30,11 @@ services:
       - key: ALLOWED_ORIGINS
         sync: false
 
-  # Frontend (React + Vite)
   - type: web
     name: cred-management-frontend
     env: static
-    plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_URL
         sync: false
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
