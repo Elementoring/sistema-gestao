@@ -151,13 +151,15 @@ const createTables = async () => {
     }
 
     // Criar usuário admin padrão
+    const defaultUsername = process.env.ADMIN_USERNAME || 'admin';
+    const defaultFullName = process.env.ADMIN_FULL_NAME || 'Administrador';
     const defaultPassword = process.env.ADMIN_PASSWORD || 'admin123';
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
     await client.query(`
       INSERT INTO users (username, password, full_name, role)
-      VALUES ('admin', $1, 'Administrador', 'admin')
+      VALUES ($1, $2, $3, 'admin')
       ON CONFLICT (username) DO NOTHING
-    `, [hashedPassword]);
+    `, [defaultUsername, hashedPassword, defaultFullName]);
 
     await client.query('COMMIT');
     console.log('✅ Banco de dados configurado com sucesso!');
@@ -170,16 +172,6 @@ const createTables = async () => {
     client.release();
   }
 };
-
-createTables()
-  .then(async () => {
-    // No Render Free, a DB pode demorar a ficar pronta; garante retry.
-    // Observação: createTables já é idempotente (CREATE TABLE IF NOT EXISTS / ON CONFLICT DO NOTHING).
-    // Então rodar várias vezes é seguro.
-  })
-  .catch(() => {
-    // Ignorado aqui; vamos rodar com retry abaixo.
-  });
 
 runWithRetry(createTables)
   .then(() => {
