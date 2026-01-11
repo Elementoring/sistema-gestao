@@ -1,9 +1,11 @@
-# 🔐 CREDENCIAIS DE ACESSO ATUALIZADAS
+# 🔐 CREDENCIAIS DE ACESSO
 
-## ✅ Novas Credenciais
+## ✅ Credenciais Padrão
 
-**Usuário:** `>[USUARIO_REMOVIDO]<<`  
-**Senha:** `>[SENHA_REMOVIDA]<<`
+**Usuário:** `admin`  
+**Senha:** `admin123`
+
+⚠️ **IMPORTANTE:** Altere a senha no primeiro acesso!
 
 ---
 

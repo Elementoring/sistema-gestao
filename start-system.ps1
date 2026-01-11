@@ -44,7 +44,7 @@ Write-Host "
    - Backend: http://localhost:3001
    - Frontend: http://localhost:5173
    
-📌 Login padrão: >[USUARIO_REMOVIDO]<< / >[SENHA_REMOVIDA]<<
+📌 Login padrão: admin / admin123 (⚠️ ALTERE NO PRIMEIRO ACESSO)
 
 Para parar o sistema, pressione Ctrl+C em ambas as janelas.
 " -ForegroundColor Green

@@ -76,7 +76,9 @@ npm run db:setup
 Você verá:
 ```
 ✅ Banco de dados configurado com sucesso!
-👤 Usuário admin criado - Login: >[USUARIO_REMOVIDO]<< / Senha: >[SENHA_REMOVIDA]<<
+👤 Usuário admin criado - Login: admin / Senha: admin123
+
+⚠️ **ALTERE A SENHA NO PRIMEIRO ACESSO!**
 ```
 
 ### 6️⃣ Iniciar o Sistema
@@ -106,8 +108,10 @@ npm run dev
 Abra o navegador em: **http://localhost:5173**
 
 **Credenciais padrão:**
-- Usuário: `>[USUARIO_REMOVIDO]<<`
-- Senha: `>[SENHA_REMOVIDA]<<`
+- Usuário: `admin`
+- Senha: `admin123`
+
+⚠️ **ALTERE IMEDIATAMENTE NO PRIMEIRO LOGIN!**
 
 ---
 

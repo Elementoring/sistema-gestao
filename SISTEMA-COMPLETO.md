@@ -8,7 +8,9 @@
 
 **✅ Backend:** Rodando em http://localhost:3001  
 **✅ Frontend:** Rodando em http://localhost:5173  
-**✅ Login:** >[USUARIO_REMOVIDO]<< / >[SENHA_REMOVIDA]<<
+**✅ Login:** admin / admin123
+
+⚠️ **ALTERE A SENHA NO PRIMEIRO ACESSO!**
 
 **🎯 Implementação:** 10/10 funcionalidades (100%)
 

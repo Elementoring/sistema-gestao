@@ -132,16 +132,17 @@ const createTables = async () => {
     }
 
     // Criar usuário admin padrão
-    const hashedPassword = await bcrypt.hash('>[SENHA_REMOVIDA]<<', 10);
+    const defaultPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
     await client.query(`
       INSERT INTO users (username, password, full_name, role)
-      VALUES ('>[USUARIO_REMOVIDO]<<', $1, 'Fábio Real Cred', 'admin')
+      VALUES ('admin', $1, 'Administrador', 'admin')
       ON CONFLICT (username) DO NOTHING
     `, [hashedPassword]);
 
     await client.query('COMMIT');
     console.log('✅ Banco de dados configurado com sucesso!');
-    console.log('👤 Usuário admin criado - Login: >[USUARIO_REMOVIDO]<< / Senha: >[SENHA_REMOVIDA]<<');
+    console.log('👤 Usuário admin criado - ALTERE A SENHA NO PRIMEIRO LOGIN!');
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('❌ Erro ao configurar banco de dados:', error);

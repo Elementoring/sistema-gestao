@@ -95,8 +95,10 @@ npm run db:setup
 ```
 
 Isso criará todas as tabelas e o usuário admin padrão:
-- **Login:** >[USUARIO_REMOVIDO]<<
-- **Senha:** >[SENHA_REMOVIDA]<<
+- **Login:** admin
+- **Senha:** admin123
+
+⚠️ **Altere a senha no primeiro acesso!**
 
 ### 6. Iniciar o sistema
 
