@@ -2,8 +2,6 @@ services:
   - type: pserv
     name: cred-management-db
     plan: free
-    databaseName: cred_management
-    databaseUser: cred_admin
 
   - type: web
     name: cred-management-backend
