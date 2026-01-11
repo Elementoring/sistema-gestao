@@ -11,6 +11,8 @@ services:
     startCommand: cd backend && npm start
     healthCheckPath: /api/health
     envVars:
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
@@ -34,5 +36,7 @@ services:
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
       - key: VITE_API_URL
         sync: false
