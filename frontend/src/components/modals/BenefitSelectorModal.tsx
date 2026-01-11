@@ -81,7 +81,7 @@ export default function BenefitSelectorModal({
                         <div>
                           <span className="text-gray-500">Salário Bruto:</span>
                           <span className="ml-2 font-medium text-green-600">
-                            R$ {parseFloat(benefit.gross_salary).toLocaleString('pt-BR', {
+                            R$ {Number(benefit.gross_salary).toLocaleString('pt-BR', {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
                             })}

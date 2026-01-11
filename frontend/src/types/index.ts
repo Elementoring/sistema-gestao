@@ -72,6 +72,7 @@ export interface Proposal {
   attended_by?: number;
   notes?: string;
   cpf?: string;
+  client_cpf?: string;
   client_name?: string;
   birth_date?: string;
   age?: number;

@@ -63,7 +63,7 @@ export default function ReportsPage() {
   // Estatísticas principais
   const totalProposals = filteredProposals.length;
   const approvedProposals = filteredProposals.filter(p => p.status === 'Aprovada' || p.status === 'Paga').length;
-  const totalValue = filteredProposals.reduce((sum, p) => sum + parseFloat(p.contract_value || 0), 0);
+  const totalValue = filteredProposals.reduce((sum, p) => sum + Number(p.contract_value || 0), 0);
   const avgValue = totalProposals > 0 ? totalValue / totalProposals : 0;
   const approvalRate = totalProposals > 0 ? (approvedProposals / totalProposals) * 100 : 0;
 
@@ -85,7 +85,7 @@ export default function ReportsPage() {
     }
     
     acc[monthYear].quantidade += 1;
-    acc[monthYear].valor += parseFloat(p.contract_value || 0);
+    acc[monthYear].valor += Number(p.contract_value || 0);
     
     return acc;
   }, {});

@@ -40,7 +40,7 @@ export const exportClientsToExcel = (clients: any[]) => {
     'Órgão Benefício': client.benefits?.[0]?.benefit_organ || '',
     'Nº Benefício': client.benefits?.[0]?.benefit_number || '',
     'Espécie': client.benefits?.[0]?.benefit_species || '',
-    'Salário Bruto': client.benefits?.[0]?.gross_salary ? `R$ ${parseFloat(client.benefits[0].gross_salary).toFixed(2)}` : '',
+    'Salário Bruto': client.benefits?.[0]?.gross_salary ? `R$ ${Number(client.benefits[0].gross_salary || 0).toFixed(2)}` : '',
     'Cadastrado em': new Date(client.created_at).toLocaleDateString('pt-BR')
   }));
 
@@ -53,8 +53,8 @@ export const exportProposalsToExcel = (proposals: any[]) => {
     'Data Proposta': new Date(proposal.proposal_date).toLocaleDateString('pt-BR'),
     'Cliente': proposal.client_name,
     'CPF': proposal.cpf,
-    'Valor Contrato': `R$ ${parseFloat(proposal.contract_value).toFixed(2)}`,
-    'Valor Parcela': `R$ ${parseFloat(proposal.installment_value).toFixed(2)}`,
+    'Valor Contrato': `R$ ${Number(proposal.contract_value || 0).toFixed(2)}`,
+    'Valor Parcela': `R$ ${Number(proposal.installment_value || 0).toFixed(2)}`,
     'Qtd Parcelas': proposal.installment_count,
     'Banco Contrato': proposal.contract_bank,
     'Tipo Contrato': proposal.contract_type,

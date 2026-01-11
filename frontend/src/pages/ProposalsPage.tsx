@@ -122,7 +122,7 @@ export default function ProposalsPage() {
       p.status === 'Digitada' || p.status === 'Aguardando Análise' || p.status === 'Em Análise'
     ).length,
     rejected: proposals.filter((p) => p.status === 'Recusada' || p.status === 'Cancelada').length,
-    totalValue: proposals.reduce((sum, p) => sum + (parseFloat(p.contract_value) || 0), 0),
+    totalValue: proposals.reduce((sum, p) => sum + (Number(p.contract_value || 0) || 0), 0),
   };
 
   if (loading) {
@@ -369,16 +369,16 @@ export default function ProposalsPage() {
                         {proposal.client_name}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">
-                        {formatCPF(proposal.client_cpf)}
+                        {formatCPF(proposal.client_cpf || proposal.cpf || '')}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">
                         {proposal.contract_bank}
                       </td>
                       <td className="py-3 px-4 text-sm font-semibold text-gray-900">
-                        {formatCurrency(parseFloat(proposal.contract_value))}
+                        {formatCurrency(Number(proposal.contract_value || 0))}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">
-                        {proposal.installment_count}x de {formatCurrency(parseFloat(proposal.installment_value))}
+                        {proposal.installment_count}x de {formatCurrency(Number(proposal.installment_value || 0))}
                       </td>
                       <td className="py-3 px-4">
                         <span
@@ -407,7 +407,7 @@ export default function ProposalsPage() {
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          {isAdmin && (
+                          {isAdmin() && (
                             <Button
                               variant="ghost"
                               size="icon"
