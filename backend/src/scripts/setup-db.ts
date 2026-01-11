@@ -1,6 +1,25 @@
 import { pool } from '../config/database';
 import bcrypt from 'bcryptjs';
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const runWithRetry = async (fn: () => Promise<void>, attempts = 10, delayMs = 2000) => {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      await fn();
+      return;
+    } catch (error) {
+      lastError = error;
+      console.error(`❌ Tentativa ${attempt}/${attempts} falhou ao configurar o banco.`, error);
+      if (attempt < attempts) {
+        await sleep(delayMs);
+      }
+    }
+  }
+  throw lastError;
+};
+
 const createTables = async () => {
   const client = await pool.connect();
   
@@ -153,6 +172,16 @@ const createTables = async () => {
 };
 
 createTables()
+  .then(async () => {
+    // No Render Free, a DB pode demorar a ficar pronta; garante retry.
+    // Observação: createTables já é idempotente (CREATE TABLE IF NOT EXISTS / ON CONFLICT DO NOTHING).
+    // Então rodar várias vezes é seguro.
+  })
+  .catch(() => {
+    // Ignorado aqui; vamos rodar com retry abaixo.
+  });
+
+runWithRetry(createTables)
   .then(() => {
     console.log('🎉 Setup concluído!');
     process.exit(0);
