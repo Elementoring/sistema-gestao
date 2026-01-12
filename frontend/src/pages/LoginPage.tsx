@@ -192,6 +192,7 @@ export default function LoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            autoComplete="current-password"
                             className="relative h-12 px-4 pr-12 text-base border-2 border-gray-200 focus:border-blue-500 rounded-xl transition-all"
                             disabled={loading}
                           />

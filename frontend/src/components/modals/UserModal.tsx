@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -95,9 +95,12 @@ export default function UserModal({ open, onClose, onSave, user }: UserModalProp
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-md" aria-describedby="user-modal-description">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{user ? 'Editar Usuário' : 'Novo Usuário'}</DialogTitle>
+          <DialogDescription id="user-modal-description">
+            {user ? 'Edite as informações do usuário abaixo' : 'Preencha os dados para criar um novo usuário'}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -146,6 +149,7 @@ export default function UserModal({ open, onClose, onSave, user }: UserModalProp
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••"
+                autoComplete="new-password"
                 required={!user}
               />
               <button
@@ -175,6 +179,7 @@ export default function UserModal({ open, onClose, onSave, user }: UserModalProp
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••"
+                  autoComplete="new-password"
                   required
                 />
                 <button

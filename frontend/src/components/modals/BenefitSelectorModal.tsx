@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Check } from 'lucide-react';
@@ -29,12 +29,12 @@ export default function BenefitSelectorModal({
 }: BenefitSelectorModalProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-3xl" aria-describedby="benefit-selector-description">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Selecione o Benefício para a Proposta</DialogTitle>
-          <p className="text-sm text-gray-500 mt-2">
+          <DialogDescription id="benefit-selector-description">
             Este cliente possui múltiplos benefícios cadastrados. Selecione qual benefício será usado nesta proposta:
-          </p>
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 max-h-[60vh] overflow-y-auto">
