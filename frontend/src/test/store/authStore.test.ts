@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { useAuthStore } from '@/store/authStore';
 
 describe('Auth Store', () => {
@@ -17,7 +17,7 @@ describe('Auth Store', () => {
     const mockUser = {
       id: 1,
       username: 'testuser',
-      full_name: 'Test User',
+      fullName: 'Test User',
       role: 'user' as const,
       active: true,
       created_at: new Date().toISOString()
@@ -43,7 +43,7 @@ describe('Auth Store', () => {
     const mockUser = {
       id: 1,
       username: 'testuser',
-      full_name: 'Test User',
+      fullName: 'Test User',
       role: 'user' as const,
       active: true,
       created_at: new Date().toISOString()
@@ -64,7 +64,7 @@ describe('Auth Store', () => {
     const mockUser = {
       id: 1,
       username: 'testuser',
-      full_name: 'Test User',
+      fullName: 'Test User',
       role: 'user' as const,
       active: true,
       created_at: new Date().toISOString()
@@ -81,7 +81,7 @@ describe('Auth Store', () => {
     useAuthStore.getState().setUser({
       id: 1,
       username: 'testuser',
-      full_name: 'Test User',
+      fullName: 'Test User',
       role: 'user',
       active: true,
       created_at: new Date().toISOString()
@@ -93,7 +93,7 @@ describe('Auth Store', () => {
     const adminUser = {
       id: 1,
       username: 'admin',
-      full_name: 'Administrator',
+      fullName: 'Administrator',
       role: 'admin' as const,
       active: true,
       created_at: new Date().toISOString()
@@ -107,7 +107,7 @@ describe('Auth Store', () => {
     const regularUser = {
       id: 2,
       username: 'user',
-      full_name: 'Regular User',
+      fullName: 'Regular User',
       role: 'user' as const,
       active: true,
       created_at: new Date().toISOString()
