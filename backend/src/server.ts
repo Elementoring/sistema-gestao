@@ -25,25 +25,36 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
-console.log('🔐 CORS - Origens permitidas:', allowedOrigins);
+console.log('🔐 CORS Configuration:');
+console.log('   ALLOWED_ORIGINS env:', process.env.ALLOWED_ORIGINS);
+console.log('   Parsed origins:', allowedOrigins);
+console.log('   NODE_ENV:', process.env.NODE_ENV);
 
 app.use(cors({
   origin: (origin, callback) => {
+    console.log(`🔍 CORS check for origin: ${origin || 'NO ORIGIN'}`);
+    
     // Permite requisições sem origin (mobile apps, Postman, etc)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('✅ Allowing request without origin');
+      return callback(null, true);
+    }
     
     if (allowedOrigins.includes(origin)) {
       console.log(`✅ CORS permitiu origem: ${origin}`);
       callback(null, true);
     } else {
-      console.warn(`❌ CORS bloqueou origem: ${origin}`);
-      console.warn(`   Origens permitidas: ${allowedOrigins.join(', ')}`);
+      console.warn(`❌ CORS BLOCKED - Origin: ${origin}`);
+      console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 // Rate limiting
