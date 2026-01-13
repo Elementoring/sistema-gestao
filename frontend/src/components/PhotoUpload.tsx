@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Camera, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
+import { useAuthStore } from '@/store/authStore';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -17,6 +18,7 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
     currentPhotoUrl ? `${API_URL.replace('/api', '')}${currentPhotoUrl}` : null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const token = useAuthStore((state) => state.token);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -46,8 +48,6 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
     try {
       const formData = new FormData();
       formData.append('photo', file);
-
-      const token = localStorage.getItem('token');
       
       if (!token) {
         alert('Sessão expirada. Por favor, faça login novamente e tente salvar o cliente.');
