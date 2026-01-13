@@ -2,38 +2,62 @@ import { Router, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { query } from '../config/database';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { auditLog } from '../middleware/audit';
 
 const router = Router();
 
-// Configurar diretório de uploads
-const uploadDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configurar Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'demo',
+  api_key: process.env.CLOUDINARY_API_KEY || '',
+  api_secret: process.env.CLOUDINARY_API_SECRET || '',
+});
 
-// Configurar subdiretórios
+// Verificar se Cloudinary está configurado
+const useCloudinary = !!(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+);
+
+console.log(`📦 Storage: ${useCloudinary ? 'Cloudinary' : 'Local filesystem'}`);
+
+// Configurar diretório de uploads local (fallback)
+const uploadDir = path.join(__dirname, '../../uploads');
 const clientPhotosDir = path.join(uploadDir, 'client-photos');
 const documentsDir = path.join(uploadDir, 'documents');
 
-[clientPhotosDir, documentsDir].forEach(dir => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-});
+if (!useCloudinary) {
+  [uploadDir, clientPhotosDir, documentsDir].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
+}
 
-// Configuração do multer para fotos de clientes
-const clientPhotoStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, clientPhotosDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'client-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Storage para fotos de clientes
+const clientPhotoStorage = useCloudinary
+  ? new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: async (req, file) => ({
+        folder: 'cred-management/client-photos',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [{ width: 800, height: 800, crop: 'limit' }],
+      }),
+    })
+  : multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, clientPhotosDir);
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'client-' + uniqueSuffix + path.extname(file.originalname));
+      }
+    });
 
 const clientPhotoUpload = multer({
   storage: clientPhotoStorage,
@@ -52,15 +76,24 @@ const clientPhotoUpload = multer({
 });
 
 // Configuração do multer para documentos gerais
-const documentStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, documentsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'doc-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+const documentStorage = useCloudinary
+  ? new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: async (req, file) => ({
+        folder: 'cred-management/documents',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
+        resource_type: 'auto',
+      }),
+    })
+  : multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, documentsDir);
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'doc-' + uniqueSuffix + path.extname(file.originalname));
+      }
+    });
 
 const documentUpload = multer({
   storage: documentStorage,
@@ -85,7 +118,11 @@ router.post('/client-photo/:clientId', authenticate, clientPhotoUpload.single('p
     }
 
     const { clientId } = req.params;
-    const photoUrl = `/uploads/client-photos/${req.file.filename}`;
+    
+    // URL da foto (Cloudinary ou local)
+    const photoUrl = useCloudinary 
+      ? (req.file as any).path  // Cloudinary retorna a URL completa em .path
+      : `/uploads/client-photos/${req.file.filename}`;
 
     // Buscar foto anterior para deletar
     const oldClient = await query('SELECT photo_url FROM clients WHERE id = $1', [clientId]);
@@ -98,9 +135,22 @@ router.post('/client-photo/:clientId', authenticate, clientPhotoUpload.single('p
 
     // Deletar foto anterior se existir
     if (oldClient.rows[0]?.photo_url) {
-      const oldPhotoPath = path.join(__dirname, '../..', oldClient.rows[0].photo_url);
-      if (fs.existsSync(oldPhotoPath)) {
-        fs.unlinkSync(oldPhotoPath);
+      if (useCloudinary) {
+        // Extrair public_id da URL do Cloudinary para deletar
+        const urlParts = oldClient.rows[0].photo_url.split('/');
+        const publicIdWithExt = urlParts.slice(-2).join('/'); // folder/filename.ext
+        const publicId = publicIdWithExt.replace(/\.[^/.]+$/, ''); // remover extensão
+        try {
+          await cloudinary.uploader.destroy(publicId);
+        } catch (error) {
+          console.error('Erro ao deletar foto antiga do Cloudinary:', error);
+        }
+      } else {
+        // Sistema de arquivos local
+        const oldPhotoPath = path.join(__dirname, '../..', oldClient.rows[0].photo_url);
+        if (fs.existsSync(oldPhotoPath)) {
+          fs.unlinkSync(oldPhotoPath);
+        }
       }
     }
 
@@ -127,7 +177,10 @@ router.post('/document', authenticate, auditLog('CREATE', 'DOCUMENT'), documentU
       return res.status(400).json({ error: 'Dados incompletos' });
     }
 
-    const filePath = `/uploads/documents/${req.file.filename}`;
+    // URL do arquivo (Cloudinary ou local)
+    const filePath = useCloudinary 
+      ? (req.file as any).path  // Cloudinary retorna a URL completa em .path
+      : `/uploads/documents/${req.file.filename}`;
 
     const result = await query(
       `INSERT INTO documents 

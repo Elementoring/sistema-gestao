@@ -29,6 +29,12 @@ services:
         value: Administrador
       - key: ALLOWED_ORIGINS
         value: https://cred-management-frontend.onrender.com
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
 
   - type: web
     name: cred-management-frontend
