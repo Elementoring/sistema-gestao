@@ -41,12 +41,13 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "perMachine": false,
-      "createDesktopShortcut": true,
+      "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
       "shortcutName": "Cred Management+",
       "installerIcon": "assets/icon.ico",
       "uninstallerIcon": "assets/icon.ico",
-      "license": "LICENSE.txt"
+      "license": "LICENSE.txt",
+      "deleteAppDataOnUninstall": false
     }
   },
   "dependencies": {
