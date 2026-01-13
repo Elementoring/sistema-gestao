@@ -197,9 +197,9 @@ router.get('/cpf/:cpf', authenticate, async (req: AuthRequest, res: Response) =>
 
 // Criar cliente
 router.post('/', authenticate, auditLog('CREATE', 'CLIENT'), async (req: AuthRequest, res: Response) => {
-  const client = await query('BEGIN');
-  
   try {
+    await query('BEGIN');
+    
     const data = clientSchema.parse(req.body);
     const benefits = req.body.benefits || [];
 
@@ -267,9 +267,9 @@ router.post('/', authenticate, auditLog('CREATE', 'CLIENT'), async (req: AuthReq
 
 // Atualizar cliente
 router.put('/:id', authenticate, auditLog('UPDATE', 'CLIENT'), async (req: AuthRequest, res: Response) => {
-  const client = await query('BEGIN');
-  
   try {
+    await query('BEGIN');
+    
     const { id } = req.params;
     const data = clientSchema.parse(req.body);
     const benefits = req.body.benefits || [];
