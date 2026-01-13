@@ -9,6 +9,20 @@ import { validateCPF, formatCPF } from '@/lib/utils';
 import { clientService } from '@/services/dataService';
 import { Loader2, AlertCircle } from 'lucide-react';
 
+// Função para converter data ISO para formato yyyy-MM-dd
+const formatDateForInput = (dateString: string | null | undefined): string => {
+  if (!dateString) return new Date().toISOString().split('T')[0];
+  try {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } catch {
+    return new Date().toISOString().split('T')[0];
+  }
+};
+
 const CONTRACT_TYPES = [
   'Novo',
   'Refinanciamento',
@@ -82,7 +96,7 @@ export default function ProposalModal({
   useEffect(() => {
     if (proposal) {
       // Preencher formulário para edição
-      setProposalDate(proposal.proposal_date || new Date().toISOString().split('T')[0]);
+      setProposalDate(formatDateForInput(proposal.proposal_date));
       setCpf(formatCPF(proposal.client_cpf || ''));
       setClientName(proposal.client_name || '');
       setContractValue(proposal.contract_value || '');

@@ -48,6 +48,11 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
       formData.append('photo', file);
 
       const token = localStorage.getItem('token');
+      
+      if (!token) {
+        throw new Error('Usuário não autenticado');
+      }
+
       const response = await axios.post(
         `${API_URL}/uploads/client-photo/${clientId}`,
         formData,
@@ -63,7 +68,11 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
       alert('Foto enviada com sucesso!');
     } catch (error: any) {
       console.error('Erro ao fazer upload:', error);
-      alert(error.response?.data?.error || 'Erro ao fazer upload da foto');
+      if (error.response?.status === 401) {
+        alert('Sessão expirada. Por favor, faça login novamente.');
+      } else {
+        alert(error.response?.data?.error || error.message || 'Erro ao fazer upload da foto');
+      }
       setPreview(currentPhotoUrl ? `${API_URL.replace('/api', '')}${currentPhotoUrl}` : null);
     } finally {
       setUploading(false);

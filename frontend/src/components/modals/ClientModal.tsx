@@ -14,6 +14,20 @@ import { getBenefitDescription } from '@/data/benefitSpecies';
 import { Plus, X, Loader2, Tag } from 'lucide-react';
 import PhotoUpload from '@/components/PhotoUpload';
 
+// Função para converter data ISO para formato yyyy-MM-dd
+const formatDateForInput = (dateString: string | null | undefined): string => {
+  if (!dateString) return '';
+  try {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } catch {
+    return '';
+  }
+};
+
 interface Benefit {
   benefit_organ: string;
   benefit_number: string;
@@ -90,14 +104,14 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
       // Preencher formulário com dados do cliente para edição
       setCpf(formatCPF(client.cpf));
       setFullName(client.full_name);
-      setBirthDate(client.birth_date);
+      setBirthDate(formatDateForInput(client.birth_date));
       setAge(client.age);
       setEmail(client.email || '');
       setRg(client.rg || '');
       setDocumentType(client.document_type || 'RG');
       setRgIssuer(client.rg_issuer || '');
       setRgIssuerState(client.rg_issuer_state || '');
-      setRgIssueDate(client.rg_issue_date || '');
+      setRgIssueDate(formatDateForInput(client.rg_issue_date));
       setMotherName(client.mother_name || '');
       setFatherName(client.father_name || '');
       setBirthplaceCity(client.birthplace_city || '');
@@ -114,7 +128,12 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
       setTags(client.tags || []);
       setNotes(client.notes || '');
       setPhotoUrl(client.photo_url || '');
-      setBenefits(client.benefits || []);
+      // Formatar datas nos benefícios
+      const formattedBenefits = (client.benefits || []).map((benefit: any) => ({
+        ...benefit,
+        concession_date: formatDateForInput(benefit.concession_date)
+      }));
+      setBenefits(formattedBenefits);
     } else {
       resetForm();
     }

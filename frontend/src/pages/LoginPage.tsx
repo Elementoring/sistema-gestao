@@ -171,6 +171,7 @@ export default function LoginPage() {
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           required
+                          autoComplete="username"
                           className="relative h-12 px-4 text-base border-2 border-gray-200 focus:border-blue-500 rounded-xl transition-all"
                           disabled={loading}
                         />
