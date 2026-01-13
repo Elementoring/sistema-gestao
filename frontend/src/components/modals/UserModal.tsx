@@ -95,7 +95,7 @@ export default function UserModal({ open, onClose, onSave, user }: UserModalProp
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" aria-describedby="user-modal-description">
         <DialogHeader>
           <DialogTitle>{user ? 'Editar Usuário' : 'Novo Usuário'}</DialogTitle>
           <DialogDescription id="user-modal-description">

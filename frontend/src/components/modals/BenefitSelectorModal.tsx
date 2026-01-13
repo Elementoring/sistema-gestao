@@ -29,7 +29,7 @@ export default function BenefitSelectorModal({
 }: BenefitSelectorModalProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl" aria-describedby="benefit-selector-description">
         <DialogHeader>
           <DialogTitle>Selecione o Benefício para a Proposta</DialogTitle>
           <DialogDescription id="benefit-selector-description">

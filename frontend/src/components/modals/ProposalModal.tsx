@@ -292,7 +292,7 @@ export default function ProposalModal({
   return (
     <>
       <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto" aria-describedby="proposal-modal-description">
           <DialogHeader>
             <DialogTitle>{proposal ? 'Editar Proposta' : 'Nova Proposta'}</DialogTitle>
             <DialogDescription id="proposal-modal-description">

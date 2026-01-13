@@ -50,7 +50,9 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
       const token = localStorage.getItem('token');
       
       if (!token) {
-        throw new Error('Usuário não autenticado');
+        alert('Sessão expirada. Por favor, faça login novamente e tente salvar o cliente.');
+        setUploading(false);
+        return;
       }
 
       const response = await axios.post(
