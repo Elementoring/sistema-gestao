@@ -258,10 +258,16 @@ router.post('/', authenticate, auditLog('CREATE', 'CLIENT'), async (req: AuthReq
   } catch (error) {
     await query('ROLLBACK');
     if (error instanceof z.ZodError) {
+      console.error('❌ Erro de validação ao criar cliente:', error.errors);
       return res.status(400).json({ error: error.errors[0].message });
     }
-    console.error('Erro ao criar cliente:', error);
-    return res.status(500).json({ error: 'Erro ao criar cliente' });
+    console.error('❌ Erro ao criar cliente:', error);
+    console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'N/A');
+    console.error('❌ Dados recebidos:', JSON.stringify(req.body, null, 2));
+    return res.status(500).json({ 
+      error: 'Erro ao criar cliente',
+      message: error instanceof Error ? error.message : 'Erro desconhecido'
+    });
   }
 });
 
@@ -337,10 +343,15 @@ router.put('/:id', authenticate, auditLog('UPDATE', 'CLIENT'), async (req: AuthR
   } catch (error) {
     await query('ROLLBACK');
     if (error instanceof z.ZodError) {
+      console.error('❌ Erro de validação ao atualizar cliente:', error.errors);
       return res.status(400).json({ error: error.errors[0].message });
     }
-    console.error('Erro ao atualizar cliente:', error);
-    return res.status(500).json({ error: 'Erro ao atualizar cliente' });
+    console.error('❌ Erro ao atualizar cliente:', error);
+    console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'N/A');
+    return res.status(500).json({ 
+      error: 'Erro ao atualizar cliente',
+      message: error instanceof Error ? error.message : 'Erro desconhecido'
+    });
   }
 });
 
