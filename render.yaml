@@ -28,7 +28,7 @@ services:
       - key: ADMIN_FULL_NAME
         value: Administrador
       - key: ALLOWED_ORIGINS
-        sync: false
+        value: https://cred-management-frontend.onrender.com
 
   - type: web
     name: cred-management-frontend
@@ -39,4 +39,4 @@ services:
       - key: NPM_CONFIG_PRODUCTION
         value: "false"
       - key: VITE_API_URL
-        sync: false
+        value: https://cred-management-backend.onrender.com
