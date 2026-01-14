@@ -39,8 +39,8 @@ export default function DashboardLayout() {
         {/* Logo */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-md">
-              <Building2 className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md border border-gray-200 p-1.5">
+              <img src="/logo.png" alt="Cred Management" className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800">

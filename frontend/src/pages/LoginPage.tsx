@@ -66,8 +66,8 @@ export default function LoginPage() {
               <div className="flex items-center gap-3 mb-6">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
-                  <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-                    <Building2 className="w-11 h-11 text-white" />
+                  <div className="relative w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-2xl p-2">
+                    <img src="/logo.png" alt="Cred Management" className="w-full h-full object-contain" />
                   </div>
                 </div>
                 <div>
