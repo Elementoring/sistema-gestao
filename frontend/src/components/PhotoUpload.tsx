@@ -92,21 +92,11 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
     <div className="flex flex-col items-center gap-4">
       <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-300">
         {preview ? (
-          <>
-            <img
-              src={preview}
-              alt="Foto do cliente"
-              className="w-full h-full object-cover"
-            />
-            <button
-              type="button"
-              onClick={handleRemove}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-              aria-label="Remover foto"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </>
+          <img
+            src={preview}
+            alt="Foto do cliente"
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="flex items-center justify-center h-full">
             <Camera className="w-12 h-12 text-gray-400" />
@@ -123,25 +113,40 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
         aria-label="Selecionar foto do cliente"
       />
 
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
-      >
-        {uploading ? (
-          <>
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-            Enviando...
-          </>
-        ) : (
-          <>
-            <Upload className="w-4 h-4 mr-2" />
-            {preview ? 'Alterar Foto' : 'Enviar Foto'}
-          </>
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+              Enviando...
+            </>
+          ) : (
+            <>
+              <Upload className="w-4 h-4 mr-2" />
+              {preview ? 'Alterar Foto' : 'Enviar Foto'}
+            </>
+          )}
+        </Button>
+
+        {preview && !uploading && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleRemove}
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            <X className="w-4 h-4 mr-2" />
+            Remover
+          </Button>
         )}
-      </Button>
+      </div>
 
       <p className="text-xs text-gray-500 text-center">
         JPG, PNG ou GIF. Máximo 5MB
