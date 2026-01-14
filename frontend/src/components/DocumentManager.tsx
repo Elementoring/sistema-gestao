@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, Upload, Download, Trash2, File, Image, FileSpreadsheet } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface Document {
   id: number;
@@ -56,7 +56,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/uploads/documents/${entityType}/${entityId}`,
+        `${API_URL}/api/uploads/documents/${entityType}/${entityId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -89,7 +89,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
 
       const token = localStorage.getItem('token');
       await axios.post(
-        `${API_URL}/uploads/document`,
+        `${API_URL}/api/uploads/document`,
         formData,
         {
           headers: {
@@ -122,7 +122,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
     try {
       const token = localStorage.getItem('token');
       await axios.delete(
-        `${API_URL}/uploads/document/${docId}`,
+        `${API_URL}/api/uploads/document/${docId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -137,7 +137,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   };
 
   const handleDownload = (filePath: string, fileName: string) => {
-    const url = `${API_URL.replace('/api', '')}${filePath}`;
+    const url = `${API_URL}${filePath}`;
     const link = document.createElement('a');
     link.href = url;
     link.download = fileName;

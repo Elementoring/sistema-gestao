@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface PhotoUploadProps {
   clientId: number;
@@ -15,7 +15,7 @@ interface PhotoUploadProps {
 export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(
-    currentPhotoUrl ? `${API_URL.replace('/api', '')}${currentPhotoUrl}` : null
+    currentPhotoUrl ? `${API_URL}${currentPhotoUrl}` : null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const token = useAuthStore((state) => state.token);
@@ -56,7 +56,7 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
       }
 
       const response = await axios.post(
-        `${API_URL}/uploads/client-photo/${clientId}`,
+        `${API_URL}/api/uploads/client-photo/${clientId}`,
         formData,
         {
           headers: {
@@ -75,7 +75,7 @@ export default function PhotoUpload({ clientId, currentPhotoUrl, onPhotoUploaded
       } else {
         alert(error.response?.data?.error || error.message || 'Erro ao fazer upload da foto');
       }
-      setPreview(currentPhotoUrl ? `${API_URL.replace('/api', '')}${currentPhotoUrl}` : null);
+      setPreview(currentPhotoUrl ? `${API_URL}${currentPhotoUrl}` : null);
     } finally {
       setUploading(false);
     }
