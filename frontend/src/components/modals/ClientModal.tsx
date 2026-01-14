@@ -298,6 +298,7 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
         state,
         phone_1: phone1,
         phone_2: phone2,
+        photo_url: photoUrl,
         tags,
         notes,
         benefits,

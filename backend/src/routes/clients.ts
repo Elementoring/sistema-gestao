@@ -299,15 +299,18 @@ router.put('/:id', authenticate, auditLog('UPDATE', 'CLIENT'), async (req: AuthR
         birthplace_state = $13, zip_code = $14, address = $15,
         address_number = $16, address_complement = $17, neighborhood = $18,
         city = $19, state = $20, phone_1 = $21, phone_2 = $22, email = $23,
-        tags = $24, notes = $25, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $26
+        tags = $24, notes = $25, 
+        photo_url = COALESCE($26, photo_url),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $27
       RETURNING *`,
       [
         cpf, data.full_name, data.birth_date, age, data.rg, data.document_type, data.rg_issuer,
         data.rg_issuer_state, data.rg_issue_date, data.mother_name, data.father_name,
         data.birthplace_city, data.birthplace_state, data.zip_code, data.address,
         data.address_number, data.address_complement, data.neighborhood, data.city,
-        data.state, data.phone_1, data.phone_2, data.email, data.tags || [], data.notes, id
+        data.state, data.phone_1, data.phone_2, data.email, data.tags || [], data.notes, 
+        req.body.photo_url || null, id
       ]
     );
 
