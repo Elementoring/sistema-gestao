@@ -220,15 +220,16 @@ router.post('/', authenticate, auditLog('CREATE', 'CLIENT'), async (req: AuthReq
         cpf, full_name, birth_date, age, rg, document_type, rg_issuer, rg_issuer_state, 
         rg_issue_date, mother_name, father_name, birthplace_city, birthplace_state,
         zip_code, address, address_number, address_complement, neighborhood, 
-        city, state, phone_1, phone_2, email, tags, notes, created_by
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
+        city, state, phone_1, phone_2, email, tags, notes, photo_url, created_by
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
       RETURNING *`,
       [
         cpf, data.full_name, data.birth_date, age, data.rg, data.document_type, data.rg_issuer,
         data.rg_issuer_state, data.rg_issue_date, data.mother_name, data.father_name,
         data.birthplace_city, data.birthplace_state, data.zip_code, data.address,
         data.address_number, data.address_complement, data.neighborhood, data.city,
-        data.state, data.phone_1, data.phone_2, data.email, data.tags || [], data.notes, req.user!.id
+        data.state, data.phone_1, data.phone_2, data.email, data.tags || [], data.notes, 
+        req.body.photo_url || null, req.user!.id
       ]
     );
 

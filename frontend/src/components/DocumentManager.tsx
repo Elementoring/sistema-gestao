@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { FileText, Upload, Download, Trash2, File, Image, FileSpreadsheet } from 'lucide-react';
 import axios from 'axios';
+import { useAuthStore } from '@/store/authStore';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -47,6 +48,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   const [documentType, setDocumentType] = useState('rg');
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
     loadDocuments();
@@ -54,7 +56,6 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
 
   const loadDocuments = async () => {
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.get(
         `${API_URL}/api/uploads/documents/${entityType}/${entityId}`,
         {
@@ -87,7 +88,6 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
       formData.append('entity_id', entityId.toString());
       formData.append('document_type', documentType);
 
-      const token = localStorage.getItem('token');
       await axios.post(
         `${API_URL}/api/uploads/document`,
         formData,
@@ -120,7 +120,6 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
     }
 
     try {
-      const token = localStorage.getItem('token');
       await axios.delete(
         `${API_URL}/api/uploads/document/${docId}`,
         {
