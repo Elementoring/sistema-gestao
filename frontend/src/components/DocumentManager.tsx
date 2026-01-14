@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { FileText, Upload, Download, Trash2, File, Image, FileSpreadsheet, Eye, X } from 'lucide-react';
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
@@ -138,7 +138,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   };
 
   const handleDownload = (filePath: string, fileName: string) => {
-    const url = `${API_URL}${filePath}`;
+    const url = getFileUrl(filePath);
     const link = document.createElement('a');
     link.href = url;
     link.download = fileName;
@@ -176,6 +176,15 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
     return DOCUMENT_TYPES.find(t => t.value === type)?.label || type;
   };
 
+  const getFileUrl = (filePath: string) => {
+    // Se já é uma URL completa (Cloudinary), usar diretamente
+    if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+      return filePath;
+    }
+    // Senão, concatenar com API_URL (sistema local)
+    return `${API_URL}${filePath}`;
+  };
+
   const handlePreview = (doc: Document) => {
     setPreviewDoc(doc);
   };
@@ -187,7 +196,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   const renderPreview = () => {
     if (!previewDoc) return null;
 
-    const fileUrl = `${API_URL}${previewDoc.file_path}`;
+    const fileUrl = getFileUrl(previewDoc.file_path);
     const isImage = previewDoc.mime_type.startsWith('image/');
     const isPdf = previewDoc.mime_type.includes('pdf');
 
@@ -201,6 +210,9 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
                 <X className="w-4 h-4" />
               </Button>
             </DialogTitle>
+            <DialogDescription>
+              Visualização do documento {getDocumentTypeLabel(previewDoc.document_type)}
+            </DialogDescription>
           </DialogHeader>
           <div className="overflow-auto max-h-[70vh]">
             {isImage && (
