@@ -40,22 +40,6 @@ const migrateDatabase = async () => {
       END $$;
     `);
 
-    // Adicionar coluna photo_url se não existir
-    await client.query(`
-      DO $$ 
-      BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM information_schema.columns 
-          WHERE table_name = 'clients' AND column_name = 'photo_url'
-        ) THEN
-          ALTER TABLE clients ADD COLUMN photo_url VARCHAR(500);
-          RAISE NOTICE 'Coluna photo_url adicionada com sucesso';
-        ELSE
-          RAISE NOTICE 'Coluna photo_url já existe';
-        END IF;
-      END $$;
-    `);
-
     await client.query('COMMIT');
     console.log('✅ Migração concluída com sucesso!');
   } catch (error) {

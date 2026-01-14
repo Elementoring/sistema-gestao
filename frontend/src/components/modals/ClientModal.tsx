@@ -12,7 +12,6 @@ import { BENEFIT_ORGANS } from '@/data/benefitOrgans';
 import { getBankName } from '@/data/banks';
 import { getBenefitDescription } from '@/data/benefitSpecies';
 import { Plus, X, Loader2, Tag } from 'lucide-react';
-import PhotoUpload from '@/components/PhotoUpload';
 
 // Função para converter data ISO para formato yyyy-MM-dd
 const formatDateForInput = (dateString: string | null | undefined): string => {
@@ -94,7 +93,6 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [notes, setNotes] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('');
   
   // Benefícios
   const [benefits, setBenefits] = useState<Benefit[]>([]);
@@ -127,7 +125,6 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
       setPhone2(client.phone_2 || '');
       setTags(client.tags || []);
       setNotes(client.notes || '');
-      setPhotoUrl(client.photo_url || '');
       // Formatar datas nos benefícios
       const formattedBenefits = (client.benefits || []).map((benefit: any) => ({
         ...benefit,
@@ -166,7 +163,6 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
     setTags([]);
     setNewTag('');
     setNotes('');
-    setPhotoUrl('');
     setBenefits([]);
     setCpfError('');
   };
@@ -298,7 +294,6 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
         state,
         phone_1: phone1,
         phone_2: phone2,
-        photo_url: photoUrl,
         tags,
         notes,
         benefits,
@@ -324,17 +319,6 @@ export default function ClientModal({ open, onClose, onSave, client }: ClientMod
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Foto do Cliente */}
-          {client && (
-            <div className="border-b pb-6">
-              <PhotoUpload
-                clientId={client.id}
-                currentPhotoUrl={photoUrl}
-                onPhotoUploaded={(url) => setPhotoUrl(url)}
-              />
-            </div>
-          )}
-
           {/* Dados Pessoais */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Dados Pessoais</h3>

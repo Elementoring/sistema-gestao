@@ -67,7 +67,6 @@ const createTables = async () => {
         phone_1 VARCHAR(15),
         phone_2 VARCHAR(15),
         email VARCHAR(200),
-        photo_url VARCHAR(500),
         tags TEXT[],
         notes TEXT,
         created_by INTEGER REFERENCES users(id),

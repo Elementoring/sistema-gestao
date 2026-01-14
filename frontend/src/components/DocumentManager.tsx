@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Upload, Download, Trash2, File, Image, FileSpreadsheet } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { FileText, Upload, Download, Trash2, File, Image, FileSpreadsheet, Eye, X } from 'lucide-react';
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
@@ -47,6 +48,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   const [showForm, setShowForm] = useState(false);
   const [documentType, setDocumentType] = useState('rg');
   const [uploading, setUploading] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const token = useAuthStore((state) => state.token);
 
@@ -174,6 +176,66 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
     return DOCUMENT_TYPES.find(t => t.value === type)?.label || type;
   };
 
+  const handlePreview = (doc: Document) => {
+    setPreviewDoc(doc);
+  };
+
+  const closePreview = () => {
+    setPreviewDoc(null);
+  };
+
+  const renderPreview = () => {
+    if (!previewDoc) return null;
+
+    const fileUrl = `${API_URL}${previewDoc.file_path}`;
+    const isImage = previewDoc.mime_type.startsWith('image/');
+    const isPdf = previewDoc.mime_type.includes('pdf');
+
+    return (
+      <Dialog open={!!previewDoc} onOpenChange={closePreview}>
+        <DialogContent className="max-w-4xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>{previewDoc.file_name}</span>
+              <Button variant="ghost" size="sm" onClick={closePreview}>
+                <X className="w-4 h-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="overflow-auto max-h-[70vh]">
+            {isImage && (
+              <img 
+                src={fileUrl} 
+                alt={previewDoc.file_name}
+                className="w-full h-auto"
+              />
+            )}
+            {isPdf && (
+              <iframe 
+                src={fileUrl} 
+                className="w-full h-[70vh]"
+                title={previewDoc.file_name}
+              />
+            )}
+            {!isImage && !isPdf && (
+              <div className="text-center py-8 text-gray-500">
+                <FileText className="w-16 h-16 mx-auto mb-4" />
+                <p>Pré-visualização não disponível para este tipo de arquivo</p>
+                <Button 
+                  className="mt-4"
+                  onClick={() => handleDownload(previewDoc.file_path, previewDoc.file_name)}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Baixar Arquivo
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   if (loading) {
     return (
       <Card>
@@ -190,15 +252,17 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle>Documentos</CardTitle>
-        <Button size="sm" onClick={() => setShowForm(!showForm)}>
-          <Upload className="w-4 h-4 mr-2" />
-          Adicionar Documento
-        </Button>
-      </CardHeader>
-      <CardContent>
+    <>
+      {renderPreview()}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle>Documentos</CardTitle>
+          <Button size="sm" onClick={() => setShowForm(!showForm)}>
+            <Upload className="w-4 h-4 mr-2" />
+            Adicionar Documento
+          </Button>
+        </CardHeader>
+        <CardContent>
         {/* Form */}
         {showForm && (
           <div className="mb-6 p-4 border rounded-lg bg-gray-50 space-y-4">
@@ -276,7 +340,16 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
                 <Button
                   size="sm"
                   variant="outline"
+                  onClick={() => handlePreview(doc)}
+                  title="Visualizar"
+                >
+                  <Eye className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={() => handleDownload(doc.file_path, doc.file_name)}
+                  title="Baixar"
                 >
                   <Download className="w-4 h-4" />
                 </Button>
@@ -284,6 +357,7 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
                   size="sm"
                   variant="outline"
                   onClick={() => handleDelete(doc.id)}
+                  title="Excluir"
                 >
                   <Trash2 className="w-4 h-4 text-red-500" />
                 </Button>
@@ -299,5 +373,6 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }
