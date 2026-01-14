@@ -133,6 +133,22 @@ const createTables = async () => {
       )
     `);
 
+    // Tabela de documentos/anexos
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS documents (
+        id SERIAL PRIMARY KEY,
+        entity_type VARCHAR(50) NOT NULL,
+        entity_id INTEGER NOT NULL,
+        document_type VARCHAR(100) NOT NULL,
+        file_name VARCHAR(255) NOT NULL,
+        file_path VARCHAR(500) NOT NULL,
+        file_size INTEGER,
+        mime_type VARCHAR(100),
+        uploaded_by INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Inserir órgãos de benefício
     const organs = [
       'INSS',

@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { clientService } from '@/services/dataService';
 import { Client } from '@/types';
-import { Plus, Search, Edit, Trash2, Eye, FileDown } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Eye, FileDown, FileText } from 'lucide-react';
 import { formatCPF, formatPhone, formatDate } from '@/lib/utils';
 import { useAuthStore } from '@/store/authStore';
 import ClientModal from '@/components/modals/ClientModal';
 import { exportClientsToExcel } from '@/lib/exportExcel';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import DocumentManager from '@/components/DocumentManager';
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -16,6 +18,8 @@ export default function ClientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | undefined>(undefined);
+  const [documentsModalOpen, setDocumentsModalOpen] = useState(false);
+  const [selectedClientForDocs, setSelectedClientForDocs] = useState<Client | null>(null);
   const { isAdmin } = useAuthStore();
 
   useEffect(() => {
@@ -73,6 +77,16 @@ export default function ClientsPage() {
       console.error('Erro ao excluir cliente:', error);
       alert('Erro ao excluir cliente');
     }
+  };
+
+  const handleOpenDocumentsModal = (client: Client) => {
+    setSelectedClientForDocs(client);
+    setDocumentsModalOpen(true);
+  };
+
+  const handleCloseDocumentsModal = () => {
+    setDocumentsModalOpen(false);
+    setSelectedClientForDocs(null);
   };
 
   const filteredClients = clients.filter((client) => {
@@ -240,6 +254,14 @@ export default function ClientsPage() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            title="Documentos"
+                            onClick={() => handleOpenDocumentsModal(client)}
+                          >
+                            <FileText className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             title="Visualizar"
                             onClick={() => handleOpenModal(client)}
                           >
@@ -282,6 +304,23 @@ export default function ClientsPage() {
         onSave={handleSaveClient}
         client={selectedClient}
       />
+
+      {/* Modal de Documentos */}
+      <Dialog open={documentsModalOpen} onOpenChange={setDocumentsModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              Documentos - {selectedClientForDocs?.full_name}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedClientForDocs && (
+            <DocumentManager 
+              entityType="CLIENT" 
+              entityId={selectedClientForDocs.id} 
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
