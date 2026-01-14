@@ -84,11 +84,6 @@ export default function ClientsPage() {
     setDocumentsModalOpen(true);
   };
 
-  const handleCloseDocumentsModal = () => {
-    setDocumentsModalOpen(false);
-    setSelectedClientForDocs(null);
-  };
-
   const filteredClients = clients.filter((client) => {
     const search = searchTerm.toLowerCase();
     return (
@@ -306,7 +301,13 @@ export default function ClientsPage() {
       />
 
       {/* Modal de Documentos */}
-      <Dialog open={documentsModalOpen} onOpenChange={setDocumentsModalOpen}>
+      <Dialog 
+        open={documentsModalOpen} 
+        onOpenChange={(open) => {
+          setDocumentsModalOpen(open);
+          if (!open) setSelectedClientForDocs(null);
+        }}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
