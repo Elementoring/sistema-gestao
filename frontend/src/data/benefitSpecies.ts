@@ -28,6 +28,7 @@ export const benefitSpecies = [
   { code: '27', description: 'Pensão por morte de servidor público federal com dupla aposentadoria' },
   { code: '28', description: 'Pensão por morte do Regime Geral (Decreto nº 20.465/31)' },
   { code: '29', description: 'Pensão por morte de ex-combatente marítimo (Lei nº 1.756/52)' },
+  { code: '30', description: 'Renda mensal vitalícia por incapacidade' },
   { code: '55', description: 'Pensão por morte (Extinto Plano Básico)' },
   { code: '84', description: 'Pensão por morte (Ex-SASSE)' },
   { code: '13', description: 'Auxílio-doença do trabalhador rural' },
