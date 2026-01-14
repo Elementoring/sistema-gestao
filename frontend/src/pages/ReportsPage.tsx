@@ -10,13 +10,15 @@ import { formatCurrency } from '@/lib/utils';
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 const STATUS_COLORS: Record<string, string> = {
-  'Aprovada': '#10b981',
-  'Paga': '#059669',
-  'Em Análise': '#3b82f6',
-  'Aguardando Análise': '#f59e0b',
-  'Digitada': '#6366f1',
-  'Recusada': '#ef4444',
-  'Cancelada': '#9ca3af',
+  'AGUARDA AUMENTO': '#f59e0b',
+  'PAGO': '#10b981',
+  'CANCELADA': '#9ca3af',
+  'PORT PAGA (NÃO COMISSIONADA)': '#059669',
+  'FAZER DESBLOQUEIO': '#f97316',
+  'PORT EM AVERBAÇÃO': '#3b82f6',
+  'EM FORMALIZAÇÃO': '#8b5cf6',
+  'PENDENTE': '#d97706',
+  'AGUARDANDO SALDO': '#06b6d4',
 };
 
 export default function ReportsPage() {
@@ -62,7 +64,7 @@ export default function ReportsPage() {
 
   // Estatísticas principais
   const totalProposals = filteredProposals.length;
-  const approvedProposals = filteredProposals.filter(p => p.status === 'Aprovada' || p.status === 'Paga').length;
+  const approvedProposals = filteredProposals.filter(p => p.status === 'PAGO' || p.status === 'PORT PAGA (NÃO COMISSIONADA)').length;
   const totalValue = filteredProposals.reduce((sum, p) => sum + Number(p.contract_value || 0), 0);
   const avgValue = totalProposals > 0 ? totalValue / totalProposals : 0;
   const approvalRate = totalProposals > 0 ? (approvedProposals / totalProposals) * 100 : 0;

@@ -12,13 +12,15 @@ import ProposalModal from '@/components/modals/ProposalModal';
 import { exportProposalsToExcel } from '@/lib/exportExcel';
 
 const STATUS_COLORS: Record<string, string> = {
-  'Digitada': 'bg-blue-100 text-blue-800',
-  'Aguardando Análise': 'bg-yellow-100 text-yellow-800',
-  'Em Análise': 'bg-purple-100 text-purple-800',
-  'Aprovada': 'bg-green-100 text-green-800',
-  'Paga': 'bg-emerald-100 text-emerald-800',
-  'Recusada': 'bg-red-100 text-red-800',
-  'Cancelada': 'bg-gray-100 text-gray-800',
+  'AGUARDA AUMENTO': 'bg-yellow-100 text-yellow-800',
+  'PAGO': 'bg-green-100 text-green-800',
+  'CANCELADA': 'bg-gray-100 text-gray-800',
+  'PORT PAGA (NÃO COMISSIONADA)': 'bg-emerald-100 text-emerald-800',
+  'FAZER DESBLOQUEIO': 'bg-orange-100 text-orange-800',
+  'PORT EM AVERBAÇÃO': 'bg-blue-100 text-blue-800',
+  'EM FORMALIZAÇÃO': 'bg-purple-100 text-purple-800',
+  'PENDENTE': 'bg-amber-100 text-amber-800',
+  'AGUARDANDO SALDO': 'bg-cyan-100 text-cyan-800',
 };
 
 export default function ProposalsPage() {
@@ -117,11 +119,12 @@ export default function ProposalsPage() {
   // Estatísticas
   const stats = {
     total: proposals.length,
-    approved: proposals.filter((p) => p.status === 'Aprovada' || p.status === 'Paga').length,
+    approved: proposals.filter((p) => p.status === 'PAGO' || p.status === 'PORT PAGA (NÃO COMISSIONADA)').length,
     pending: proposals.filter((p) => 
-      p.status === 'Digitada' || p.status === 'Aguardando Análise' || p.status === 'Em Análise'
+      p.status === 'PENDENTE' || p.status === 'EM FORMALIZAÇÃO' || p.status === 'PORT EM AVERBAÇÃO' || 
+      p.status === 'AGUARDANDO SALDO' || p.status === 'AGUARDA AUMENTO' || p.status === 'FAZER DESBLOQUEIO'
     ).length,
-    rejected: proposals.filter((p) => p.status === 'Recusada' || p.status === 'Cancelada').length,
+    rejected: proposals.filter((p) => p.status === 'CANCELADA').length,
     totalValue: proposals.reduce((sum, p) => sum + (Number(p.contract_value || 0) || 0), 0),
   };
 
@@ -215,13 +218,15 @@ export default function ProposalsPage() {
                     aria-label="Filtrar por status"
                   >
                     <option value="all">Todos</option>
-                    <option value="Digitada">Digitada</option>
-                    <option value="Aguardando Análise">Aguardando Análise</option>
-                    <option value="Em Análise">Em Análise</option>
-                    <option value="Aprovada">Aprovada</option>
-                    <option value="Paga">Paga</option>
-                    <option value="Recusada">Recusada</option>
-                    <option value="Cancelada">Cancelada</option>
+                    <option value="AGUARDA AUMENTO">AGUARDA AUMENTO</option>
+                    <option value="PAGO">PAGO</option>
+                    <option value="CANCELADA">CANCELADA</option>
+                    <option value="PORT PAGA (NÃO COMISSIONADA)">PORT PAGA (NÃO COMISSIONADA)</option>
+                    <option value="FAZER DESBLOQUEIO">FAZER DESBLOQUEIO</option>
+                    <option value="PORT EM AVERBAÇÃO">PORT EM AVERBAÇÃO</option>
+                    <option value="EM FORMALIZAÇÃO">EM FORMALIZAÇÃO</option>
+                    <option value="PENDENTE">PENDENTE</option>
+                    <option value="AGUARDANDO SALDO">AGUARDANDO SALDO</option>
                   </select>
                 </div>
                 <div>

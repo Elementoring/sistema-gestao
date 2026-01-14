@@ -33,13 +33,15 @@ const CONTRACT_TYPES = [
 ];
 
 const STATUS_OPTIONS = [
-  'Digitada',
-  'Aguardando Análise',
-  'Em Análise',
-  'Aprovada',
-  'Paga',
-  'Recusada',
-  'Cancelada',
+  'AGUARDA AUMENTO',
+  'PAGO',
+  'CANCELADA',
+  'PORT PAGA (NÃO COMISSIONADA)',
+  'FAZER DESBLOQUEIO',
+  'PORT EM AVERBAÇÃO',
+  'EM FORMALIZAÇÃO',
+  'PENDENTE',
+  'AGUARDANDO SALDO',
 ];
 
 interface ProposalModalProps {
@@ -73,7 +75,7 @@ export default function ProposalModal({
   const [contractBank, setContractBank] = useState('');
   const [bankLogin, setBankLogin] = useState('');
   const [contractType, setContractType] = useState('');
-  const [status, setStatus] = useState('Digitada');
+  const [status, setStatus] = useState('PENDENTE');
   const [benefitOrgan, setBenefitOrgan] = useState('');
   const [interestRate, setInterestRate] = useState('');
   const [digitizerEmployee, setDigitizerEmployee] = useState(currentUser);
