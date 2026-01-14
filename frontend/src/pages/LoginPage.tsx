@@ -5,7 +5,7 @@ import { authService } from '@/services/authService';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Building2, Loader2, Eye, EyeOff, Shield, TrendingUp, Users, FileText, Lock, ChevronRight, Sparkles } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Shield, TrendingUp, Users, FileText, Lock, ChevronRight, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();

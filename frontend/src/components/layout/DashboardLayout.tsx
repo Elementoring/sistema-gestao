@@ -7,8 +7,7 @@ import {
   FileText, 
   BarChart3, 
   Settings,
-  LogOut,
-  Building2
+  LogOut
 } from 'lucide-react';
 
 export default function DashboardLayout() {
