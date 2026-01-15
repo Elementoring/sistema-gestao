@@ -121,6 +121,10 @@ const loginLimiter = rateLimit({
 });
 
 app.use(limiter);
+
+// Handler explícito para OPTIONS (preflight) - DEVE vir ANTES de tudo
+app.options('*', cors());
+
 app.use(express.json({ limit: '10mb' })); // Limitar tamanho do payload
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -159,10 +163,35 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Rota não encontrada' });
 });
 
-// Handler de erro global
+// Handler de erro global (incluindo erros do Multer)
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Erro:', err);
-  res.status(500).json({ error: 'Erro interno do servidor' });
+  console.error('❌ Erro:', err.message || err);
+  
+  // Garantir que headers CORS sejam enviados mesmo em erro
+  const origin = req.headers.origin;
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  
+  // Erros do Multer (upload)
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ error: 'Arquivo muito grande' });
+  }
+  
+  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+    return res.status(400).json({ error: 'Campo de arquivo inesperado' });
+  }
+  
+  // Outros erros do Multer
+  if (err.name === 'MulterError') {
+    return res.status(400).json({ error: err.message });
+  }
+  
+  // Erro genérico
+  res.status(err.status || 500).json({ 
+    error: err.message || 'Erro interno do servidor' 
+  });
 });
 
 app.listen(PORT, () => {
