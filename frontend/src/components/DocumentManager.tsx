@@ -179,6 +179,18 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   const getFileUrl = (filePath: string) => {
     // Se já é uma URL completa (Cloudinary), usar diretamente
     if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+      // CORREÇÃO: Cloudinary PDFs devem usar /raw/upload/ ao invés de /image/upload/
+      // Isso corrige URLs antigas que foram salvas incorretamente
+      if (filePath.includes('cloudinary.com') && filePath.includes('/image/upload/')) {
+        // Verificar se é um PDF pela extensão da URL
+        if (filePath.endsWith('.pdf') || filePath.includes('.pdf?')) {
+          return filePath.replace('/image/upload/', '/raw/upload/');
+        }
+        // Também corrigir para documentos office
+        if (filePath.match(/\.(doc|docx|xls|xlsx|txt|csv)/i)) {
+          return filePath.replace('/image/upload/', '/raw/upload/');
+        }
+      }
       return filePath;
     }
     // Senão, concatenar com API_URL (sistema local)

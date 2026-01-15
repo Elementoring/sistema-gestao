@@ -28,6 +28,13 @@ router.use((req, res, next) => {
   next();
 });
 
+// Helper function para formatar bytes
+const formatBytes = (bytes: number): string => {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+};
+
 // Configurar Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'demo',
@@ -97,11 +104,22 @@ const clientPhotoUpload = multer({
 const documentStorage = useCloudinary
   ? new CloudinaryStorage({
       cloudinary: cloudinary,
-      params: async (req, file) => ({
-        folder: 'cred-management/documents',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
-        resource_type: 'auto',
-      }),
+      params: async (req, file) => {
+        // Detectar se é imagem ou documento
+        const isImage = /jpeg|jpg|png|gif|webp/.test(file.mimetype);
+        
+        return {
+          folder: 'cred-management/documents',
+          resource_type: isImage ? 'image' : 'raw', // 'raw' para PDFs e documentos não-imagem
+          allowed_formats: isImage 
+            ? ['jpg', 'jpeg', 'png', 'gif', 'webp']
+            : ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv'],
+          // Não aplicar transformações em documentos raw
+          ...(isImage && { 
+            transformation: [{ width: 2000, height: 2000, crop: 'limit' }] 
+          })
+        };
+      },
     })
   : multer.diskStorage({
       destination: (req, file, cb) => {
@@ -200,6 +218,18 @@ router.post('/document', authenticate, auditLog('CREATE', 'DOCUMENT'), documentU
       ? (req.file as any).path  // Cloudinary retorna a URL completa em .path
       : `/uploads/documents/${req.file.filename}`;
 
+    // Log para debug
+    console.log('📄 Upload de documento:');
+    console.log('   Nome:', req.file.originalname);
+    console.log('   Tipo:', req.file.mimetype);
+    console.log('   Tamanho:', formatBytes(req.file.size));
+    console.log('   URL:', filePath);
+    console.log('   Storage:', useCloudinary ? 'Cloudinary' : 'Local');
+    if (useCloudinary) {
+      const isImage = /image\/(jpeg|jpg|png|gif|webp)/.test(req.file.mimetype);
+      console.log('   Resource Type:', isImage ? 'image' : 'raw');
+    }
+
     const result = await query(
       `INSERT INTO documents 
        (entity_type, entity_id, document_type, file_name, file_path, file_size, mime_type, uploaded_by)
@@ -250,20 +280,43 @@ router.delete('/document/:id', authenticate, auditLog('DELETE', 'DOCUMENT'), asy
   try {
     const { id } = req.params;
 
-    const result = await query('SELECT file_path FROM documents WHERE id = $1', [id]);
+    const result = await query('SELECT file_path, mime_type FROM documents WHERE id = $1', [id]);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Documento não encontrado' });
     }
 
-    const filePath = path.join(__dirname, '../..', result.rows[0].file_path);
+    const filePath = result.rows[0].file_path;
+    const mimeType = result.rows[0].mime_type;
     
     // Deletar do banco
     await query('DELETE FROM documents WHERE id = $1', [id]);
 
-    // Deletar arquivo físico
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Deletar arquivo
+    if (useCloudinary && filePath.includes('cloudinary.com')) {
+      // Extrair public_id da URL do Cloudinary
+      try {
+        const urlParts = filePath.split('/');
+        const fileWithExt = urlParts[urlParts.length - 1];
+        const fileName = fileWithExt.split('.')[0]; // Remove extensão
+        const folder = 'cred-management/documents';
+        const publicId = `${folder}/${fileName}`;
+        
+        // Determinar resource_type baseado no mime_type
+        const isImage = /image\/(jpeg|jpg|png|gif|webp)/.test(mimeType);
+        const resourceType = isImage ? 'image' : 'raw';
+        
+        await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+        console.log(`✅ Arquivo deletado do Cloudinary: ${publicId} (${resourceType})`);
+      } catch (error) {
+        console.error('❌ Erro ao deletar arquivo do Cloudinary:', error);
+      }
+    } else {
+      // Sistema de arquivos local
+      const localFilePath = path.join(__dirname, '../..', filePath);
+      if (fs.existsSync(localFilePath)) {
+        fs.unlinkSync(localFilePath);
+      }
     }
 
     return res.json({ message: 'Documento excluído com sucesso' });
