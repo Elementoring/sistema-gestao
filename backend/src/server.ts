@@ -37,12 +37,20 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// Configuração de CORS para produção e desenvolvimento
+// Configuração de CORS para produção, desenvolvimento e desktop
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : [
-      'http://localhost:5173', 
+      // Desenvolvimento local
+      'http://localhost:5173',
+      'http://localhost:5174',
       'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      // Desktop Electron
+      'file://',
+      // Produção Render.com
       'https://cred-management-frontend.onrender.com'
     ];
 
@@ -55,27 +63,42 @@ app.use(cors({
   origin: (origin, callback) => {
     console.log(`🔍 CORS check for origin: ${origin || 'NO ORIGIN'}`);
     
-    // Permite requisições sem origin (mobile apps, Postman, etc)
+    // Permite requisições sem origin (mobile apps, Postman, curl, etc)
     if (!origin) {
-      console.log('✅ Allowing request without origin');
+      console.log('✅ Allowing request without origin (mobile/curl/postman)');
+      return callback(null, true);
+    }
+
+    // Permite requisições do Electron (file:// protocol)
+    if (origin.startsWith('file://')) {
+      console.log('✅ Allowing Electron (file://) request');
       return callback(null, true);
     }
     
+    // Verifica se a origem está na lista permitida
     if (allowedOrigins.includes(origin)) {
       console.log(`✅ CORS permitiu origem: ${origin}`);
-      callback(null, true);
-    } else {
-      console.warn(`❌ CORS BLOCKED - Origin: ${origin}`);
-      console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
-      callback(new Error('Not allowed by CORS'));
+      return callback(null, true);
     }
+    
+    // Em desenvolvimento, permite qualquer localhost
+    if (process.env.NODE_ENV !== 'production' && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+      console.log(`✅ CORS permitiu origem em desenvolvimento: ${origin}`);
+      return callback(null, true);
+    }
+
+    console.warn(`❌ CORS BLOCKED - Origin: ${origin}`);
+    console.warn(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+    console.warn(`   NODE_ENV: ${process.env.NODE_ENV}`);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range', 'X-Total-Count'],
   preflightContinue: false,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
+  maxAge: 86400 // Cache preflight por 24 horas
 }));
 
 // Rate limiting global
