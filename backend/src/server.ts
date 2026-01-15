@@ -11,6 +11,7 @@ import proposalRoutes from './routes/proposals';
 import userRoutes from './routes/users';
 import historyRoutes from './routes/history';
 import uploadRoutes from './routes/uploads';
+import { sanitizeInput, detectSQLInjection, securityLogger } from './middleware/sanitize';
 
 dotenv.config();
 
@@ -18,7 +19,23 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middlewares de segurança
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:", "http:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 
 // Configuração de CORS para produção e desenvolvimento
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -57,22 +74,39 @@ app.use(cors({
   optionsSuccessStatus: 204
 }));
 
-// Rate limiting
+// Rate limiting global
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // limite de requisições por IP
   message: 'Muitas requisições deste IP, tente novamente em 15 minutos',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate limiting específico para login (mais restritivo)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // apenas 5 tentativas de login
+  message: 'Muitas tentativas de login. Tente novamente em 15 minutos',
+  skipSuccessfulRequests: true, // não conta logins bem-sucedidos
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 app.use(limiter);
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' })); // Limitar tamanho do payload
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Middlewares de segurança adicionais
+app.use(securityLogger); // Log de atividades suspeitas
+app.use(sanitizeInput); // Sanitizar inputs
+app.use(detectSQLInjection); // Detectar SQL injection
 
 // Servir arquivos estáticos (uploads)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Rotas
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', loginLimiter, authRoutes); // Rate limit específico para login
 app.use('/api/clients', clientRoutes);
 app.use('/api/proposals', proposalRoutes);
 app.use('/api/users', userRoutes);
