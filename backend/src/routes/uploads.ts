@@ -70,7 +70,7 @@ const clientPhotoStorage = useCloudinary
       cloudinary: cloudinary,
       params: async (req, file) => ({
         folder: 'cred-management/client-photos',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'tiff', 'tif'],
         transformation: [{ width: 800, height: 800, crop: 'limit' }],
       }),
     })
@@ -88,14 +88,14 @@ const clientPhotoUpload = multer({
   storage: clientPhotoStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const allowedTypes = /jpeg|jpg|png|gif|webp|bmp|svg|tiff|tif/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
     
     if (extname && mimetype) {
       cb(null, true);
     } else {
-      cb(new Error('Apenas imagens são permitidas (JPEG, PNG, GIF, WebP)'));
+      cb(new Error('Apenas imagens são permitidas (JPEG, PNG, GIF, WebP, BMP, SVG, TIFF)'));
     }
   }
 });
@@ -106,14 +106,14 @@ const documentStorage = useCloudinary
       cloudinary: cloudinary,
       params: async (req, file) => {
         // Detectar se é imagem ou documento
-        const isImage = /jpeg|jpg|png|gif|webp/.test(file.mimetype);
+        const isImage = /image\/(jpeg|jpg|png|gif|webp|bmp|svg\+xml|tiff)/.test(file.mimetype);
         
         return {
           folder: 'cred-management/documents',
           resource_type: isImage ? 'image' : 'raw', // 'raw' para PDFs e documentos não-imagem
           allowed_formats: isImage 
-            ? ['jpg', 'jpeg', 'png', 'gif', 'webp']
-            : ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'csv'],
+            ? ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'tiff', 'tif', 'ico']
+            : ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'odt', 'ods', 'odp', 'rtf', 'md', 'zip', 'rar', '7z'],
           // Não aplicar transformações em documentos raw
           ...(isImage && { 
             transformation: [{ width: 2000, height: 2000, crop: 'limit' }] 
@@ -135,13 +135,14 @@ const documentUpload = multer({
   storage: documentStorage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp|pdf|doc|docx|xls|xlsx|txt/;
+    // Tipos permitidos: imagens, documentos, planilhas, apresentações, textos, compactados
+    const allowedTypes = /jpeg|jpg|png|gif|webp|bmp|svg|tiff|tif|ico|pdf|doc|docx|odt|rtf|xls|xlsx|ods|csv|ppt|pptx|odp|txt|md|zip|rar|7z/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     
     if (extname) {
       cb(null, true);
     } else {
-      cb(new Error('Tipo de arquivo não permitido'));
+      cb(new Error('Tipo de arquivo não permitido. Formatos aceitos: imagens (JPG, PNG, GIF, etc), documentos (PDF, DOC, etc), planilhas (XLS, CSV), apresentações (PPT), textos (TXT, MD), compactados (ZIP, RAR)'));
     }
   }
 });

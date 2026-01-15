@@ -165,10 +165,35 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   };
 
   const getFileIcon = (mimeType: string) => {
+    // Imagens
     if (mimeType.startsWith('image/')) return <Image className="w-5 h-5 text-blue-500" />;
+    
+    // PDFs
     if (mimeType.includes('pdf')) return <FileText className="w-5 h-5 text-red-500" />;
-    if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) 
+    
+    // Planilhas (Excel, LibreOffice, CSV)
+    if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || 
+        mimeType.includes('csv') || mimeType.includes('.sheet')) 
       return <FileSpreadsheet className="w-5 h-5 text-green-500" />;
+    
+    // Documentos Word, LibreOffice, RTF
+    if (mimeType.includes('word') || mimeType.includes('document') || 
+        mimeType.includes('rtf') || mimeType.includes('odt'))
+      return <FileText className="w-5 h-5 text-blue-600" />;
+    
+    // Apresentações (PowerPoint, LibreOffice)
+    if (mimeType.includes('presentation') || mimeType.includes('powerpoint') || mimeType.includes('odp'))
+      return <FileText className="w-5 h-5 text-orange-500" />;
+    
+    // Textos
+    if (mimeType.includes('text/') || mimeType.includes('markdown'))
+      return <FileText className="w-5 h-5 text-gray-600" />;
+    
+    // Compactados
+    if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('7z') || mimeType.includes('compressed'))
+      return <File className="w-5 h-5 text-purple-500" />;
+    
+    // Padrão
     return <File className="w-5 h-5 text-gray-500" />;
   };
 
@@ -179,15 +204,12 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
   const getFileUrl = (filePath: string) => {
     // Se já é uma URL completa (Cloudinary), usar diretamente
     if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
-      // CORREÇÃO: Cloudinary PDFs devem usar /raw/upload/ ao invés de /image/upload/
+      // CORREÇÃO: Cloudinary documentos não-imagem devem usar /raw/upload/ ao invés de /image/upload/
       // Isso corrige URLs antigas que foram salvas incorretamente
       if (filePath.includes('cloudinary.com') && filePath.includes('/image/upload/')) {
-        // Verificar se é um PDF pela extensão da URL
-        if (filePath.endsWith('.pdf') || filePath.includes('.pdf?')) {
-          return filePath.replace('/image/upload/', '/raw/upload/');
-        }
-        // Também corrigir para documentos office
-        if (filePath.match(/\.(doc|docx|xls|xlsx|txt|csv)/i)) {
+        // Lista completa de extensões de documentos não-imagem
+        const nonImageExtensions = /\.(pdf|doc|docx|odt|rtf|xls|xlsx|ods|csv|ppt|pptx|odp|txt|md|zip|rar|7z)(\?|$)/i;
+        if (nonImageExtensions.test(filePath)) {
           return filePath.replace('/image/upload/', '/raw/upload/');
         }
       }
@@ -211,47 +233,103 @@ export default function DocumentManager({ entityType, entityId }: DocumentManage
     const fileUrl = getFileUrl(previewDoc.file_path);
     const isImage = previewDoc.mime_type.startsWith('image/');
     const isPdf = previewDoc.mime_type.includes('pdf');
+    const isText = previewDoc.mime_type.includes('text/') || previewDoc.mime_type.includes('markdown');
+    
+    // Tipos que podem ser visualizados em iframe
+    const canPreviewInIframe = isPdf || isText;
 
     return (
       <Dialog open={!!previewDoc} onOpenChange={closePreview}>
         <DialogContent className="max-w-4xl max-h-[90vh]">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span>{previewDoc.file_name}</span>
+              <span className="truncate max-w-[500px]" title={previewDoc.file_name}>
+                {previewDoc.file_name}
+              </span>
               <Button variant="ghost" size="sm" onClick={closePreview}>
                 <X className="w-4 h-4" />
               </Button>
             </DialogTitle>
-            <DialogDescription>
-              Visualização do documento {getDocumentTypeLabel(previewDoc.document_type)}
+            <DialogDescription className="flex items-center gap-2">
+              {getFileIcon(previewDoc.mime_type)}
+              <span>Visualização do documento {getDocumentTypeLabel(previewDoc.document_type)}</span>
+              <Badge variant="secondary" className="ml-2">
+                {formatFileSize(previewDoc.file_size)}
+              </Badge>
             </DialogDescription>
           </DialogHeader>
           <div className="overflow-auto max-h-[70vh]">
+            {/* Imagens */}
             {isImage && (
-              <img 
-                src={fileUrl} 
-                alt={previewDoc.file_name}
-                className="w-full h-auto"
-              />
-            )}
-            {isPdf && (
-              <iframe 
-                src={fileUrl} 
-                className="w-full h-[70vh]"
-                title={previewDoc.file_name}
-              />
-            )}
-            {!isImage && !isPdf && (
-              <div className="text-center py-8 text-gray-500">
-                <FileText className="w-16 h-16 mx-auto mb-4" />
-                <p>Pré-visualização não disponível para este tipo de arquivo</p>
+              <div className="flex flex-col items-center gap-4">
+                <img 
+                  src={fileUrl} 
+                  alt={previewDoc.file_name}
+                  className="w-full h-auto rounded-lg shadow-lg"
+                  onError={(e) => {
+                    console.error('Erro ao carregar imagem:', fileUrl);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
                 <Button 
-                  className="mt-4"
                   onClick={() => handleDownload(previewDoc.file_path, previewDoc.file_name)}
+                  variant="outline"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Baixar Arquivo
+                  Baixar Imagem
                 </Button>
+              </div>
+            )}
+            
+            {/* PDFs e Textos (visualização em iframe) */}
+            {canPreviewInIframe && !isImage && (
+              <div className="flex flex-col gap-4">
+                <iframe 
+                  src={fileUrl} 
+                  className="w-full h-[70vh] rounded-lg border-2"
+                  title={previewDoc.file_name}
+                  onError={() => {
+                    console.error('Erro ao carregar documento no iframe:', fileUrl);
+                  }}
+                />
+                <Button 
+                  onClick={() => handleDownload(previewDoc.file_path, previewDoc.file_name)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Baixar {isPdf ? 'PDF' : 'Arquivo'}
+                </Button>
+              </div>
+            )}
+            
+            {/* Outros tipos (download direto) */}
+            {!isImage && !canPreviewInIframe && (
+              <div className="text-center py-12 text-gray-500">
+                <div className="mb-4">
+                  {getFileIcon(previewDoc.mime_type)}
+                </div>
+                <FileText className="w-20 h-20 mx-auto mb-4 text-gray-400" />
+                <h3 className="text-lg font-semibold mb-2">{previewDoc.file_name}</h3>
+                <p className="mb-1">Pré-visualização não disponível para este tipo de arquivo</p>
+                <p className="text-sm text-gray-400 mb-6">Tipo: {previewDoc.mime_type}</p>
+                <div className="flex gap-2 justify-center">
+                  <Button 
+                    onClick={() => handleDownload(previewDoc.file_path, previewDoc.file_name)}
+                    size="lg"
+                  >
+                    <Download className="w-5 h-5 mr-2" />
+                    Baixar Arquivo ({formatFileSize(previewDoc.file_size)})
+                  </Button>
+                  <Button 
+                    onClick={() => window.open(fileUrl, '_blank')}
+                    variant="outline"
+                    size="lg"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    Abrir em Nova Aba
+                  </Button>
+                </div>
               </div>
             )}
           </div>
