@@ -1,44 +1,59 @@
-## Testing
+# Projeto Sistema de Gestão
 
-To run the tests for this project, follow the steps below:
+## Descrição:
+Este projeto visa criar uma aplicação de gestão de sistemas para facilitar a administração e controle de processos.
 
-1. **Install Dependencies:** Ensure you have all the necessary dependencies installed.
-   ```bash
-   npm install
-   ```
+## Tecnologias:
+- React
+- Node.js
+- Express
+- MongoDB
 
-2. **Run Tests:** Use the command below to execute the test suite:
-   ```bash
-   npm test
-   ```
+## Features:
+- Controle de usuários
+- Registro de atividades
+- Interface amigável
+- Relatórios
 
-3. **Viewing Results:** The test results will be displayed in the console. Review any failed tests and see their respective error messages.
+## Instalação:
+1. Clone o repositório.
+2. Navegue até o diretório do projeto.
+3. Instale as dependências com `npm install`.
+4. Configure o banco de dados.
+5. Inicie o servidor com `npm start`.
+6. Acesse a aplicação em `http://localhost:3000`.  
+7. Realize o login com suas credenciais.
 
-## Security Warnings
+## Acesso à Rede:
+Garanta que as configurações de firewall permitem o acesso ao servidor.
 
-We take security seriously. Please review the following warnings:
-- Always keep your dependencies updated.
-- Use a secure method to store sensitive information (e.g., use environment variables).
-- Regularly audit your project dependencies for vulnerabilities using tools like `npm audit`.
+## Criação de Usuários:
+Os usuários podem ser criados através da interface de administração ou via comando no terminal.
 
-Ensure to follow best practices for maintaining security in your application.
+## Níveis de Acesso:
+- Administrador
+- Usuário
 
-## Documentation Index
+## Estrutura do Projeto:
+- /src: Código-fonte da aplicação.
+- /public: Arquivos estáticos.
 
-- [Installation Guide](#installation)
-- [Usage Instructions](#usage)
-- [API Reference](#api-reference)
-- [Testing](#testing)
-- [Security](#security)
-- [Network Access](#network-access)
+## Segurança:
+A aplicação segue práticas de segurança como:
+- Validação de entrada de dados
+- Criptografia de senhas
 
-## Network Access
+## Testes:
+Instruções para executar os testes unitários estão disponíveis no arquivo `TESTES.md`. 
 
-This section contains the necessary information regarding network access:
-- **Required Ports:** Ensure the following ports are open:
-  - Port 80: for HTTP
-  - Port 443: for HTTPS
-- **Whitelist IP Addresses:** Include the following IP addresses in your whitelist:
-  - `192.168.1.1` (example)
-  - `203.0.113.0` (example)
-- **Network Configuration:** Review the network settings to ensure proper connectivity.
+## Troubleshooting:
+- Se a aplicação não iniciar, verifique as dependências.
+- Consulte as logs de erro para mais informações.
+
+## Índice da Documentação:
+- [INICIO-RAPIDO.md](INICIO-RAPIDO.md): Guia rápido de início.
+- [COMPLEMENTAR.md](COMPLEMENTAR.md): Documentação complementar.
+- [ESTRUTURA.md](ESTRUTURA.md): Estrutura do projeto.
+- [STATUS.md](STATUS.md): Status do projeto.
+- [DICAS.md](DICAS.md): Dicas e truques.
+- [TESTES.md](TESTES.md): Instruções para testes.
